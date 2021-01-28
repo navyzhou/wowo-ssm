@@ -1,0 +1,105 @@
+package com.yc.wowo.controller;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.yc.wowo.biz.IGoodsInfoBiz;
+import com.yc.wowo.util.RequestParamUtil;
+
+@RestController
+@RequestMapping("/goods")
+public class GoodsInfoController{
+	@Autowired
+	private IGoodsInfoBiz goodsInfoBizImpl;
+
+	@RequestMapping("/findByFirst")
+	public Map<String,Object> findByFirst(@RequestParam Map<String, Object> map)  {
+		// 要返回第一页的数据以及总记录数
+		Map<String,Object> result = new HashMap<String, Object>();
+		result.put("total", goodsInfoBizImpl.total());
+		result.put("rows", goodsInfoBizImpl.finds(RequestParamUtil.findByPageUtil(map)));
+		return result;
+	}
+	
+
+	public void finds(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		/*IGoodsInfoBiz goodsInfoBiz = new GoodsInfoBizImpl();
+		int page = Integer.parseInt(request.getParameter("page"));
+		int rows = Integer.parseInt(request.getParameter("rows"));
+		this.send(response, goodsInfoBiz.finds(page, rows));*/
+	}
+
+	public void upload(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		/*FileUploadUtil fileUploadUtil = new FileUploadUtil();
+		PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(this, request, response, null, true, 8192, true);
+		Map<String, Object> result = new HashMap<String, Object>();
+		
+		try {
+			Map<String, String> map = fileUploadUtil.uploads(pageContext);
+			
+			result.put("filename", "图片");
+			result.put("url", "../../" + map.get("upload"));
+			result.put("uploaded", 1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		this.send(response, result);*/
+	}
+
+
+	public void findByGid(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		/*String gid = request.getParameter("gid");
+		IGoodsInfoBiz goodsInfoBiz = new GoodsInfoBizImpl();
+		GoodsInfo goodsInfo = goodsInfoBiz.findByGid(gid);
+		if (goodsInfo == null) {
+			this.send(response, 500, null);
+			return;
+		}
+		this.send(response, 200, goodsInfo);*/
+	}
+
+	public void findCondition(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		/*String sid = request.getParameter("sid");
+		String gname = request.getParameter("gname");
+		String status = request.getParameter("status");
+		int page = Integer.parseInt(request.getParameter("page"));
+		int rows = Integer.parseInt(request.getParameter("rows"));
+		IGoodsInfoBiz goodsInfoBiz = new GoodsInfoBizImpl();
+		this.send(response, goodsInfoBiz.findByCondition(sid, gname, status, page, rows));*/
+	}
+
+	public void add(HttpServletRequest request, HttpServletResponse response) {
+		/*FileUploadUtil fileUploadUtil = new FileUploadUtil();
+		PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(this, request, response, null, true, 8192, true);
+		try {
+			GoodsInfo goodsInfo = fileUploadUtil.uploads(GoodsInfo.class, pageContext);
+			
+			IGoodsInfoBiz goodsInfoBiz = new GoodsInfoBizImpl();
+			int result = goodsInfoBiz.add(goodsInfo);
+			if (result > 0) {
+				this.send(response, 200, "成功");
+				return;
+			} 
+			this.send(response, 500, "失败");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}*/
+	}
+
+	public void findByPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		/*int page = Integer.parseInt(request.getParameter("page"));
+		int rows = Integer.parseInt(request.getParameter("rows"));
+		
+		IGoodsInfoBiz goodsInfoBiz = new GoodsInfoBizImpl();
+		this.send(response, goodsInfoBiz.findByPage(page, rows));*/
+	}
+}

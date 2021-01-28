@@ -1,0 +1,10 @@
+1、导包
+2、配置文件
+	db.properties
+	log4j.properties
+	spring-beans.xml
+	spring-mvc.xml
+3、配置web.xml文件
+	编码集过滤器
+	监听器
+	servlet分发器
