@@ -294,7 +294,7 @@ let app = new Vue({
 			return;
 		}
 		this.gid = gid;
-		axios.post("goods", qs.stringify({op:"findByGid", gid:gid})).then(rt => {
+		axios.post("goods/findByGid", qs.stringify({gid:gid})).then(rt => {
 			if (rt.status == 200 && rt.data.code == 200) {
 				this.goods = rt.data.data;
 				

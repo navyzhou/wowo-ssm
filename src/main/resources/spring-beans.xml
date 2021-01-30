@@ -74,4 +74,10 @@
 		<property name="maxUploadSize" value="10485760000"></property>
 		<property name="maxInMemorySize" value="40960"></property>
 	</bean>
+	
+	<!-- 邮件发送的工具类 -->
+	<bean id="sendEMailUtil" class="com.yc.wowo.util.SendEMailUtil">
+		<property name="sendEmail" value="1293580602@qq.com"></property>
+		<property name="password" value="dihpepdwtahlgefh"></property>
+	</bean>
 </beans>

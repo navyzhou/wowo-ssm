@@ -106,15 +106,9 @@
 		    <td width="130" align="right">E-mail：</td>
 		    <td width="490"><div class="toemail">
 		      <div class="intbox" style="position: relative;">
-		      <iframe frameborder="0" style="display: none; height: 250px;">
-		      <html>  <head>
-		      </head>
-		      <body> </body>
-		</html>
-		</iframe>
-		<input id="regemail" class="int-type w-thir" v-model="email" type="text" autocomplete="off" tips="邮箱地址" name="email" rule="" style="ime-mode: disabled;">
-		</div>
-		<label id="regemail_msg" class="labelbox"></label>
+				<input id="regemail" class="int-type w-thir" v-model="email" type="text" autocomplete="off" tips="邮箱地址" name="email" rule="" style="ime-mode: disabled;">
+			</div>
+			<label id="regemail_msg" class="labelbox"></label>
 		</div>
 		</td>
 		</tr>
@@ -122,6 +116,14 @@
 		  <td align="right">用户名：</td>
 		  <td><div class="intbox">
 		      <input id="username" v-model="nickName" class="int-type w-thir" type="text" tips="用户名" name="username" rule="">
+		    </div>
+		    <label id="username_msg" class="labelbox seclabel" style="width:240px;"></label></td>
+		</tr>
+		<tr>
+		  <td align="right">邮箱验证：</td>
+		  <td><div class="intbox">
+		      <input v-model="vcode" class="int-type w-thir" type="text" style="width:140px">
+		      <input type="button" value="发送邮件" @click="sendEmail" id="email_btn"/>
 		    </div>
 		    <label id="username_msg" class="labelbox seclabel" style="width:240px;"></label></td>
 		</tr>
@@ -151,7 +153,7 @@
 		  <td><div class="intbox">
 		      <input id="regsafecode" v-model="realName" class="int-type w-sec" type="text" name="regsafecode" tips="验证码" rule="required" codedata="" maxlength="4">
 		      <img id="safecoderegimg" class="pic" width="100" height="30" src="code"><a id="safecodereglink" class="tips" href="javascript:changeImage()">看不清？换一张</a></div>
-		    <label id="regsafecode_msg" class="labelbox"></label></td>
+		      <label id="regsafecode_msg" class="labelbox"></label></td>
 		</tr>
 		<tr>
 		  <td align="right"></td>
@@ -276,8 +278,37 @@ let app = new Vue({
 		againpwd: "",
 		tel: "",
 		email: "",
+		vcode: "",
 	},
 	methods: {
+		sendEmail: function() {
+			// 要做正则表达式校验
+			if (this.nickName == "" || this.email == "") {
+				showMsg("您输入的信息不完整，请确认后重新提交...", "red");
+				return;
+			}
+			$("#email_btn").attr("disabled", "true");
+			axios.post("member/send", qs.stringify({nickName:this.nickName, email:this.email})).then(rt=>{
+				if (rt.status == 200 && rt.data.code == 200) {
+					// 开始倒计时
+					var time = 180;
+					var timeTask = setInterval(() => {
+						if (time > 0) {
+							time --;
+							$("#email_btn").val(time + "S");
+						} else {
+							$("#email_btn").removeAttr("disabled").val("重新发送");
+							clearInterval(timeTask);
+						}
+					}, 1000);
+					return;
+				} else {
+					$("#email_btn").removeAttr("disabled").val("重新发送");
+					showMsg("邮件发送失败", "red");
+				}
+			})
+		},
+		
 		reg: function() {
 			// 做校验
 			if (this.nickName == "" || this.realName == "" || this.pwd == "" || this.tel == "" || this.email == "") {
@@ -290,10 +321,15 @@ let app = new Vue({
 				return;
 			}
 		
-			axios.post("member", qs.stringify({op:"reg", nickName:this.nickName, realName:this.realName, pwd:this.pwd, tel:this.tel, email:this.email})).then(rt=>{
+			axios.post("member/reg", qs.stringify({nickName:this.nickName, code:this.realName, vcode:this.vcode, pwd:this.pwd, tel:this.tel, email:this.email})).then(rt=>{
 				if (rt.status == 200 && rt.data.code == 200) {
 					$("#registererform")[0].reset();
 					showMsg("注册成功，请先登录...", "green", function(){location.href='login.html'});
+					return;
+				}
+				
+				if (rt.status == 200) {
+					showMsg("注册失败，" + rt.data.msg, "red");
 					return;
 				}
 				showMsg("注册失败，请稍后重试", "red");

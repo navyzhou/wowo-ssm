@@ -26,7 +26,7 @@
 			<input id="goods_dialog_sdate" type="date"/> - <input id="goods_dialog_edate" type="date"/>
 		</li>
 		<li class="myli"><label>商品简介：</label><textarea id="goods_dialog_intro" cols="120" rows="4"></textarea></li>
-		<li class="myli"><label>商品图片：</label><input type="file" id="goods_dialog_pics" name="pics" multiple="multiple" onchange="setImagePreviews(this, 'show_goods_dialog_pics')"/></li>
+		<li class="myli"><label>商品图片：</label><input type="file" id="goods_dialog_pics" name="goods_pics" multiple="multiple" onchange="setImagePreviews(this, 'show_goods_dialog_pics')"/></li>
 		<li id="show_goods_dialog_pics"  class="myli"></li>
 		<li class="myli"><label>商品详细：</label><textarea id="goods_dialog_detail" name="goods_dialog_detail" cols="120" rows="4"></textarea></li>
 	</ul>
@@ -68,7 +68,7 @@ var goods_obj;
 CKEDITOR.replace("goods_dialog_detail");
 
 $(function(){
-	$.post("../../shop", {op:"finds"}, data => {
+	$.post("../../shop/finds", null, data => {
 		goods_shops = data;
 		var str = '<option value="">--请选择--</option>';
 		$.each(data, function(index, item) {
@@ -83,8 +83,7 @@ $(function(){
 
 function showGoodsDataGrid() {
 	goods_obj = $('#goods_data').datagrid({   
-	    url:'../../goods',
-	    queryParams: {op:"findByPage"},
+	    url:'../../goods/findByPage',
 	    fitColumns: true,
 	    striped: true,
 	    loadMsg: "数据加载 中...",
@@ -160,46 +159,11 @@ function searchGoodsInfo() {
 	var status = $.trim($("#goods_search_status").val());
 	
 	goods_obj.datagrid({
-		url: "../../goods",
-		queryParams: {op: "findCondition", sid:sid, gname:gname, status:status}
+		url: "../../goods/findCondition",
+		queryParams: {sid:tid, gname:sname, status:status}
 	})
 }
 
-/*
-function showUpdateShopInfoDialog(sid) {
-	$("#goods_form")[0].reset(); // 表单重置  [0]相当于是将jquery对象转成js对象  $(obj) -> js对象转jquery对象
-	$("#show_goods_dialog_pics").html("");
-	$("#show_goods_dialog_license").html("");
-	
-	// 先根据编号查询这个店铺信息
-	/*$.post('../../shop', {op:"findBySid", sid: sid}, data => {
-		
-		
-	}, 'json');
-	
-	$('#goods_dialog').dialog({   
-	    title: '修改店铺信息',   
-	    fit: true, 
-	    buttons: [
-	    	{
-	    		text: "修改",
-	    		iconCls: "icon-edit",
-	    		handler: function() {
-	    			
-	    		}
-	    	}, {
-	    		text: "取消",
-	    		iconCls: "icon-cancel",
-	    		handler: function() {
-	    			$('#goods_dialog').dialog('close')
-	    		}
-	    	}
-	    ]
-	});   
-	$('#goods_dialog').dialog('open');  
-}
-
-*/
 function goods_addInfo() {
 	var sid = $.trim($("#goods_dialog_sid").val());
 	var gname = $.trim($("#goods_dialog_gname").val());
@@ -213,7 +177,7 @@ function goods_addInfo() {
 	var obj = {sid:sid, gname:gname, price:price, rebate:rebate, sdate:sdate, edate:edate, intro:intro, detail:detail};
 
 	$.ajaxFileUpload({
-		url: "../../goods?op=add", // 注意此时的op必须拼接在地址栏，不能放数据区，否则后台无法直接通过request.getParameter("op")获取
+		url: "../../goods/add", // 注意此时的op必须拼接在地址栏，不能放数据区，否则后台无法直接通过request.getParameter("op")获取
 		secureuri: false,
 		fileElementId: "goods_dialog_pics", // 所有file文本框的id属性值
 		dataType: "json", // 数据的格式
@@ -232,54 +196,4 @@ function goods_addInfo() {
 		}
 	});
 }
-
-
-/*
-function showShopInfoDetail(sid) {
-	$.post("../../shop", {op:"findBySid", sid:sid}, data => {
-		if (data.code == 200) { // 说明请求数据成功
-			$("#goods_form input,#goods_form textarea").attr("readonly", "true");
-			$("#goods_form select").attr("disabled", "true");
-			$("#goods_dialog_tid").val(data.data.tid); // 取类型编号
-			$("#goods_dialog_sname").val(data.data.sname); // 店铺名称
-			$("#goods_dialog_province").val(data.data.province);
-			
-			$("#goods_dialog_province")[0].onchange();
-			$("#goods_dialog_city").val(data.data.city);
-			
-			$("#goods_dialog_city")[0].onchange();
-			$("#goods_dialog_area").val(data.data.area);
-			
-			$("#goods_dialog_addr").val(data.data.addr);
-			$("#goods_dialog_tel").val(data.data.tel);
-			$("#goods_dialog_startHours").val(data.data.startHours);
-			$("#goods_dialog_endHours").val(data.data.endHours);
-			$("#goods_dialog_intro").val(data.data.intro); 
-			
-			var imgStr = "<img src='../../" + data.data.license + "' width='400px' height='500px' />";
-			$("#show_goods_dialog_license").html("").append($(imgStr));
-			
-			imgStr = "";
-			var pics = data.data.pics.split(";");
-			for (var i = 0, len = pics.length; i < len; i ++) {
-				imgStr += "<img src='../../" + pics[i] + "' width='100px' height='100px' />&nbsp;";
-			}
-			$("#show_goods_dialog_pics").html("").append($(imgStr));
-			$('#goods_dialog').dialog({   
-			    title: '店铺详细信息',   
-			    fit: true, 
-			    buttons: [
-			    	{
-			    		text: "关闭",
-			    		iconCls: "icon-cancel",
-			    		handler: function() {
-			    			$('#goods_dialog').dialog('close')
-			    		}
-			    	}
-			    ]
-			});   
-			$('#goods_dialog').dialog('open');  
-		}
-	}, "json");
-}*/
 </script> 
